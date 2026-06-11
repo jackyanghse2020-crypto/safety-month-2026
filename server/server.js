@@ -1,3 +1,6 @@
+/* 强制时区为东八区，确保所有Date操作按北京时间处理 */
+process.env.TZ = "Asia/Shanghai";
+
 import http from "node:http";
 import { readFileSync, existsSync, createReadStream, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -10,7 +13,7 @@ const env = loadEnv(join(__dirname, ".env"));
 // Render环境变量优先于.env文件
 Object.keys(process.env).forEach(k => { if (process.env[k] !== undefined) env[k] = process.env[k]; });
 const PORT = Number(process.env.PORT || env.PORT || 8788);
-const APP_VERSION = "v2026.06.11-render";
+const APP_VERSION = "v2026.06.11-render-tz";
 const ACTIVITY_END_AT = env.ACTIVITY_END_AT || "";
 const FEISHU_BASE = "https://open.feishu.cn/open-apis";
 const FEISHU_APP_TOKEN = cleanToken(env.FEISHU_APP_TOKEN);
@@ -158,6 +161,7 @@ function getLevel(total) {
 }
 
 function toFeishuDate(dateText) {
+  /* TZ=Asia/Shanghai 后，客户端传入的时间字符串被正确解析为东八区 */
   const date = dateText ? new Date(dateText.replace(/-/g, "/")) : new Date();
   return Number.isNaN(date.getTime()) ? Date.now() : date.getTime();
 }
@@ -166,11 +170,13 @@ function fromFeishuDate(value) {
   if (!value) return "";
   const date = new Date(Number(value));
   if (Number.isNaN(date.getTime())) return String(value);
+  /* TZ=Asia/Shanghai 后，getHours/getMinutes 等直接返回东八区时间 */
   const pad = (num) => String(num).padStart(2, "0");
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
 function formatDateTimeMs(date) {
+  /* TZ=Asia/Shanghai 后，getHours 等直接返回东八区时间 */
   const pad = (num, size = 2) => String(num).padStart(size, "0");
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${pad(date.getMilliseconds(), 3)}`;
 }
