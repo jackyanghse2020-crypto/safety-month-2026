@@ -1,0 +1,16 @@
+{
+  "name": "safety-month-2026-v3",
+  "version": "3.0.0",
+  "description": "2026年安全生产月互动闯关平台 V3 - Render部署版",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "pdfkit": "^0.19.0"
+  }
+}

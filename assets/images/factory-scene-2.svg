@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-label="安全生产月活动首页视觉">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#EAF4FF"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="560" fill="url(#sky)"/>
+  <rect x="75" y="178" width="750" height="240" rx="28" fill="#ffffff" stroke="#D5E8FA" stroke-width="6"/>
+  <path d="M120 412h660v65H120z" fill="#dceaf4"/>
+  <path d="M140 360h140V230l75-42 75 42v130h110V250l70-40 70 40v110h80v52H140z" fill="#b7d6ee"/>
+  <path d="M156 360h88v-76h-88zm220 0h88v-76h-88zm236 0h88v-76h-88z" fill="#0B3A75" opacity=".85"/>
+  <g transform="translate(320 54)">
+    <path d="M130 0l112 40v92c0 86-50 155-112 184C68 287 18 218 18 132V40z" fill="#0B3A75"/>
+    <path d="M130 28l78 28v74c0 57-31 105-78 132-47-27-78-75-78-132V56z" fill="#1E88E5"/>
+    <path d="M89 144l30 32 64-84" fill="none" stroke="#fff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(92 86)">
+    <path d="M26 74c10-42 41-66 82-66s72 24 82 66" fill="#FF9800"/>
+    <rect x="16" y="66" width="184" height="34" rx="17" fill="#f6c846"/>
+    <text x="28" y="145" fill="#0B3A75" font-size="28" font-family="Microsoft YaHei, Arial">安全帽</text>
+  </g>
+  <g transform="translate(680 80)">
+    <path d="M86 0l86 150H0z" fill="#FF9800"/>
+    <path d="M86 42v52" stroke="#fff" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="86" cy="120" r="9" fill="#fff"/>
+  </g>
+  <text x="170" y="505" fill="#0B3A75" font-size="34" font-weight="700" font-family="Microsoft YaHei, Arial">人人讲安全，个个会应急</text>
+</svg>

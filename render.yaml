@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: safety-month-2026
+    runtime: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: node server/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: FEISHU_APP_ID
+        sync: false
+      - key: FEISHU_APP_SECRET
+        sync: false
+      - key: FEISHU_APP_TOKEN
+        sync: false
+      - key: FEISHU_TABLE_ID
+        sync: false
+      - key: ACTIVITY_END_AT
+        value: "2026-06-30T23:59:59+08:00"

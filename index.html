@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026年安全生产月互动闯关平台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2343A047'/%3E%3Cpath d='M26 12h12v14h14v12H38v14H26V38H12V26h14z' fill='white'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-size='18' font-family='Microsoft YaHei, Arial' font-weight='700' fill='%230B3A75'%3E安%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css?v=20260611-0720">
+  <script>
+  /* 内联页面跳转——不依赖app.js，微信缓存旧JS也能工作 */
+  function goPage(pageId){
+    var pages=document.querySelectorAll('.page');
+    for(var i=0;i<pages.length;i++){pages[i].classList.remove('active');}
+    var t=document.getElementById(pageId);
+    if(t){t.classList.add('active');window.scrollTo(0,0);}
+    /* 同步调用app.js的showPage(如有)以保持业务逻辑 */
+    if(typeof showPage==='function'&&showPage!==goPage){try{showPage(pageId);}catch(e){}}
+  }
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="icon-btn hidden" id="backBtn" type="button" aria-label="返回">‹</button>
+      <div class="brand">
+        <span class="brand-mark">安</span>
+        <span>安全生产月</span>
+      </div>
+      <button class="text-link" id="clearBtn" type="button">清除记录</button>
+    </header>
+
+    <main>
+      <section class="page active" id="homePage">
+        <div class="hero-card">
+          <div class="safety-visual" aria-hidden="true">
+            <img src="assets/images/safety-hero-real-v2.jpg" alt="">
+          </div>
+          <h1>2026年安全生产月互动闯关平台</h1>
+          <h2>人人讲安全，个个会应急——排查整治风险隐患</h2>
+          <p>欢迎参加苏世博（南京）减振系统有限公司2026年安全生产月线上互动活动。完成四项安全挑战，提升隐患识别和应急处置能力。前50名选手将获得精美礼物一份。</p>
+          <button class="primary-btn" data-go="infoPage" type="button" onclick="goPage('infoPage')">开始闯关</button>
+        </div>
+      </section>
+
+      <section class="page" id="infoPage">
+        <div class="section-head">
+          <h2>员工信息填写</h2>
+          <p>请填写以下信息，系统会保存到本机浏览器。</p>
+        </div>
+        <form class="form-card" id="userForm">
+          <label>
+            <span>姓名</span>
+            <input id="userName" name="name" type="text" autocomplete="name" placeholder="请输入真实姓名" minlength="2" maxlength="20" required>
+          </label>
+          <label>
+            <span>部门</span>
+            <select id="department" name="department" required>
+              <option value="">请选择部门</option>
+              <option>生产部</option>
+              <option>设备部</option>
+              <option>仓储物流部</option>
+              <option>质量部</option>
+              <option>行政人事部</option>
+              <option>PA</option>
+              <option>设施部</option>
+              <option>RDC</option>
+              <option>销售</option>
+              <option>市场部</option>
+              <option>EHS部</option>
+              <option>FI&amp;IT</option>
+              <option>其他</option>
+            </select>
+          </label>
+          <label>
+            <span>工号</span>
+            <input id="employeeId" name="employeeId" type="text" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="请输入4位数字工号" required>
+          </label>
+          <p class="form-note">请填写真实信息，姓名、部门、工号均为必填项；工号必须为4位数字，未完整填写不能进入活动。</p>
+          <button class="primary-btn" type="submit">进入活动</button>
+        </form>
+      </section>
+
+      <section class="page" id="menuPage">
+        <div class="section-head">
+          <h2 id="welcomeText">欢迎进入安全月闯关活动</h2>
+          <p>完成四个模块，总分 100 分。已完成模块可重新挑战。</p>
+        </div>
+        <div class="score-strip">
+          <div><strong id="totalScoreMini">0</strong><span>当前总分</span></div>
+          <div><strong id="doneCountMini">0/4</strong><span>完成进度</span></div>
+        </div>
+        <div class="module-grid" id="moduleGrid"></div>
+        <div class="button-stack compact-actions">
+          <button class="primary-btn hidden" id="resultEntryBtn" type="button">查看我的成绩</button>
+          <button class="secondary-btn" id="rankingEntryBtn" type="button">查看排行榜</button>
+        </div>
+      </section>
+
+      <section class="page" id="hazardFindPage">
+        <div class="section-head">
+          <h2>火眼金睛查隐患</h2>
+          <p>请在 3 分钟内点击你认为存在安全隐患的位置。本关共 8 处隐患，按规定时间内点中的数量计分，时间到后自动结算。</p>
+        </div>
+        <div class="progress-card">
+          <span id="hazardFindProgress">已发现：0 / 8</span>
+          <span id="hazardFindTimer">剩余时间：03:00</span>
+          <strong id="hazardFindScore">当前得分：0分</strong>
+        </div>
+        <div class="scene-wrap">
+          <img src="assets/images/factory-scene-real-v2.jpg" alt="综合车间隐患查找场景">
+          <div id="hazardHotspots"></div>
+        </div>
+        <button class="secondary-btn" id="hazardFindFinishBtn" type="button" disabled>计时中，结算后返回活动菜单</button>
+      </section>
+
+      <section class="page" id="hazardMatchPage">
+        <div class="section-head">
+          <h2>隐患消消乐</h2>
+          <p>请点击属于安全隐患的卡片。正常做法不要点击哦！</p>
+        </div>
+        <div class="progress-card">
+          <span id="hazardMatchProgress">已消除隐患：0 / 10</span>
+          <strong id="hazardMatchScore">当前得分：0分</strong>
+        </div>
+        <div class="card-grid" id="hazardCards"></div>
+        <button class="secondary-btn" data-go="menuPage" type="button">返回活动菜单</button>
+      </section>
+
+      <section class="page" id="emergencySortPage">
+        <div class="section-head">
+          <h2>应急行动排序</h2>
+          <p>请把应急处置步骤按正确顺序排列。点击步骤加入答案区，提交后按位置正确数量计分，并查看正确答案和解释。</p>
+        </div>
+        <div class="progress-card">
+          <span id="emergencyProgress">场景 1 / 3</span>
+          <strong id="emergencyScore">当前得分：0分</strong>
+        </div>
+        <div class="sort-card">
+          <h3 id="scenarioTitle"></h3>
+          <p id="scenarioQuestion"></p>
+          <div class="answer-zone" id="answerZone"></div>
+          <div class="step-list" id="stepList"></div>
+          <div class="button-row">
+            <button class="secondary-btn" id="resetSortBtn" type="button">重新排序</button>
+            <button class="primary-btn" id="checkSortBtn" type="button">提交并进入下一场景</button>
+          </div>
+          <p class="feedback" id="sortFeedback"></p>
+        </div>
+        <button class="secondary-btn" data-go="menuPage" type="button">返回活动菜单</button>
+      </section>
+
+      <section class="page" id="quizPage">
+        <div class="section-head">
+          <h2>安全知识闯关</h2>
+          <p>请完成以下安全知识题。每题只有一个正确答案。系统将从题库中随机抽取20道题进行闯关。</p>
+        </div>
+        <div class="progress-card">
+          <span id="quizProgress">第 1 / 20 题</span>
+          <strong id="quizScore">当前得分：0分</strong>
+        </div>
+        <div class="quiz-card">
+          <span id="quizCategory"></span>
+          <h3 id="quizQuestion"></h3>
+          <div id="quizOptions"></div>
+          <div class="feedback" id="quizFeedback"></div>
+          <button class="primary-btn hidden" id="nextQuizBtn" type="button">下一题</button>
+        </div>
+        <button class="secondary-btn" data-go="menuPage" type="button">返回活动菜单</button>
+      </section>
+
+      <section class="page" id="resultPage">
+        <div class="result-panel" id="certificateCard">
+          <div class="result-hero" id="resultHero">
+            <div class="level-icon" id="levelIcon" aria-hidden="true"></div>
+            <div>
+              <p class="result-title">2026年安全生产月互动闯关成绩单</p>
+              <h2 id="finalLevel">继续加油</h2>
+              <p id="levelMessage">继续练习，把隐患识别和应急处置做得更稳。</p>
+            </div>
+          </div>
+
+          <div class="score-dashboard">
+            <div class="score-ring" aria-label="总分">
+              <svg viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="52"></circle>
+                <circle id="scoreRingFill" cx="60" cy="60" r="52"></circle>
+              </svg>
+              <div>
+                <strong id="finalTotal">0</strong>
+                <span>/ 100</span>
+              </div>
+            </div>
+            <div class="rank-rules">
+              <div><strong>90+</strong><span>安全达人</span></div>
+              <div><strong>80-89</strong><span>安全标兵</span></div>
+              <div><strong>60-79</strong><span>合格参与</span></div>
+              <div><strong>&lt;60</strong><span>继续努力</span></div>
+            </div>
+          </div>
+
+          <div class="result-body">
+            <div class="user-summary" id="resultUserInfo"></div>
+            <div class="result-list" id="resultList"></div>
+            <p class="finish-time" id="finishTime"></p>
+          </div>
+        </div>
+        <div class="button-stack">
+          <button class="secondary-btn" data-go="homePage" type="button">返回首页</button>
+          <button class="primary-btn" id="restartBtn" type="button">重新挑战</button>
+          <button class="secondary-btn" id="reportEntryBtn" type="button">打印成绩报告</button>
+          <button class="warning-btn" id="screenshotTipBtn" type="button">生成成绩截图提示</button>
+        </div>
+      </section>
+
+      <section class="page" id="reportPage">
+        <div class="report-sheet" id="reportSheet">
+          <div class="report-header">
+            <h2>安全生产月互动闯关成绩报告</h2>
+            <p>本报告仅展示个人作答过程摘要，不展示正确答案。正确答案将在活动结束后统一公布。</p>
+          </div>
+          <div class="report-block" id="reportUserBlock"></div>
+          <div class="report-block" id="reportScoreBlock"></div>
+          <div class="report-block" id="reportProcessBlock"></div>
+          <p class="report-disclaimer">为保护活动公平性，请勿将个人报告截图或 PDF 用于传播答案。</p>
+        </div>
+        <div class="button-stack print-actions">
+          <button class="primary-btn" id="printReportBtn" type="button">保存为 PDF / 打印</button>
+          <a id="pdfFallbackLink" href="#" class="secondary-btn" style="display:none;text-align:center;padding:10px;">点击查看 PDF 报告</a>
+          <button class="secondary-btn" data-go="resultPage" type="button">返回成绩页</button>
+        </div>
+      </section>
+
+      <section class="page" id="rankingPage">
+        <div class="section-head">
+          <h2>安全月闯关排行榜</h2>
+          <p>按总分从高到低排序，同分时按完成时间先后排序。</p>
+        </div>
+        <div class="rank-tabs" role="tablist" aria-label="排行榜类型">
+          <button class="active" id="companyRankTab" type="button" data-rank-type="company">公司排名</button>
+          <button id="departmentRankTab" type="button" data-rank-type="department">部门排名</button>
+        </div>
+        <div class="rank-summary" id="rankSummary"></div>
+        <div class="ranking-list" id="rankingList"></div>
+        <div class="button-stack">
+          <button class="secondary-btn" data-go="menuPage" type="button">返回活动菜单</button>
+          <button class="primary-btn" data-go="resultPage" type="button">查看我的成绩</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>人人讲安全，个个会应急——排查整治风险隐患</footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal hidden" id="modal">
+    <div class="modal-card">
+      <h3 id="modalTitle">提示</h3>
+      <p id="modalText"></p>
+      <button class="primary-btn" id="modalCloseBtn" type="button">我知道了</button>
+    </div>
+  </div>
+
+  <script src="js/data.js?v=20260611-0720"></script>
+  <script src="assets/vendor/html2canvas.min.js?v=20260611-0720"></script>
+  <script src="assets/vendor/jspdf.umd.min.js?v=20260611-0720"></script>
+  <script src="js/api.js?v=20260611-0720"></script>
+  <script src="js/app.js?v=20260611-0720"></script>
+  <script src="js/hazard-find.js?v=20260611-0720"></script>
+  <script src="js/hazard-match.js?v=20260611-0720"></script>
+  <script src="js/emergency-sort.js?v=20260611-0720"></script>
+  <script src="js/quiz.js?v=20260611-0720"></script>
+
+  <!-- 微信浏览器缓存兜底：内联脚本确保按钮始终可点击 -->
+  <script>
+  (function(){
+    function bindGoButtons() {
+      document.querySelectorAll('[data-go]').forEach(function(btn) {
+        if (btn._goBound) return;
+        btn._goBound = true;
+        btn.addEventListener('touchend', function(e) {
+          e.preventDefault();
+          goPage(btn.dataset.go);
+        }, {passive: false});
+        btn.addEventListener('click', function() {
+          goPage(btn.dataset.go);
+        });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bindGoButtons);
+    } else {
+      bindGoButtons();
+    }
+    setTimeout(bindGoButtons, 500);
+    setTimeout(bindGoButtons, 1500);
+  })();
+  </script>
+</body>
+</html>

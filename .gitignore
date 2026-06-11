@@ -1,0 +1,6 @@
+node_modules/
+reports/*.pdf
+server/.env
+server/.env.bak
+*.log
+.env
