@@ -170,15 +170,17 @@ function fromFeishuDate(value) {
   if (!value) return "";
   const date = new Date(Number(value));
   if (Number.isNaN(date.getTime())) return String(value);
-  /* TZ=Asia/Shanghai 后，getHours/getMinutes 等直接返回东八区时间 */
+  /* 强制东八区输出，不依赖服务器TZ设置 */
+  const cn = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Shanghai" }));
   const pad = (num) => String(num).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return `${cn.getFullYear()}-${pad(cn.getMonth() + 1)}-${pad(cn.getDate())} ${pad(cn.getHours())}:${pad(cn.getMinutes())}`;
 }
 
 function formatDateTimeMs(date) {
-  /* TZ=Asia/Shanghai 后，getHours 等直接返回东八区时间 */
+  /* 强制东八区输出，不依赖服务器TZ设置 */
+  const cn = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Shanghai" }));
   const pad = (num, size = 2) => String(num).padStart(size, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${pad(date.getMilliseconds(), 3)}`;
+  return `${cn.getFullYear()}-${pad(cn.getMonth() + 1)}-${pad(cn.getDate())} ${pad(cn.getHours())}:${pad(cn.getMinutes())}:${pad(cn.getSeconds())}.${pad(date.getMilliseconds(), 3)}`;
 }
 
 function normalizeRecord(record) {
