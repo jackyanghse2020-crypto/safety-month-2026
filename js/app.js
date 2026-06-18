@@ -4,6 +4,7 @@ const state = {
   completedModules: loadJSON(APP_STORAGE_KEYS.completedModules, { ...defaultCompletedModules }),
   answerLog: loadJSON(APP_STORAGE_KEYS.answerLog, structuredClone(defaultAnswerLog)),
   finishTime: localStorage.getItem(APP_STORAGE_KEYS.finishTime) || "",
+  startTimestamp: Number(localStorage.getItem(APP_STORAGE_KEYS.startTimestamp)) || 0,
   rankType: "company",
   rankingRows: []
 };
@@ -72,6 +73,7 @@ function resetAll() {
   state.completedModules = { ...defaultCompletedModules };
   state.answerLog = structuredClone(defaultAnswerLog);
   state.finishTime = "";
+  state.startTimestamp = 0;
   document.getElementById("userForm").reset();
   renderMenu();
   showPage("homePage");
@@ -510,6 +512,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     saveState();
+    /* 记录开始时间戳（首次进入游戏的时间） */
+    if (!state.startTimestamp) {
+      state.startTimestamp = Date.now();
+      localStorage.setItem(APP_STORAGE_KEYS.startTimestamp, state.startTimestamp);
+    }
     renderMenu();
     showPage("menuPage");
   });

@@ -13,7 +13,7 @@ const env = loadEnv(join(__dirname, ".env"));
 // Render环境变量优先于.env文件
 Object.keys(process.env).forEach(k => { if (process.env[k] !== undefined) env[k] = process.env[k]; });
 const PORT = Number(process.env.PORT || env.PORT || 8788);
-const APP_VERSION = "v2026.06.18-ranking-fix";
+const APP_VERSION = "v2026.06.18-duration-ranking";
 const ACTIVITY_END_AT = env.ACTIVITY_END_AT || "";
 const FEISHU_BASE = "https://open.feishu.cn/open-apis";
 const FEISHU_APP_TOKEN = cleanToken(env.FEISHU_APP_TOKEN);
@@ -39,6 +39,7 @@ const fieldNames = {
   total: "总分",
   level: "等级",
   finishTime: "完成时间",
+  durationSeconds: "用时秒数",
   submitTimePrecise: "提交时间精确",
   submitTimestamp: "提交时间戳",
   rankSortValue: "排名排序值",
@@ -197,6 +198,7 @@ function normalizeRecord(record) {
     total: Number(fields[fieldNames.total] || 0),
     level: fields[fieldNames.level] || "",
     finishTime: fromFeishuDate(fields[fieldNames.finishTime]),
+    durationSeconds: Number(fields[fieldNames.durationSeconds] || 0),
     submitTimePrecise: fields[fieldNames.submitTimePrecise] || "",
     submitTimestamp: Number(fields[fieldNames.submitTimestamp] || 0),
     rankSortValue: Number(fields[fieldNames.rankSortValue] || 0),
@@ -217,11 +219,12 @@ async function listAllRecords() {
   return rows;
 }
 
-/* ========== 排行榜规则（2026-06-18更新）==========
+/* ========== 排行榜规则（2026-06-18更新v2）==========
  * 1. 同一工号多次提交，只取第一次提交的成绩
  * 2. 总分降序排列（分数最高排第一）
- * 3. 相同分数，答题完成时间早的排前面
- * 4. 相同分数且相同完成时间，并列排名
+ * 3. 相同分数，答题用时短的排前面（用时秒数升序）
+ * 4. 相同分数且用时相同，并列排名
+ * 5. 已有记录无用时数据(0)的，排在有数据记录之后
  */
 function bestRows(records) {
   const best = new Map();
@@ -233,15 +236,23 @@ function bestRows(records) {
       best.set(key, row);
     }
   }
-  // 排序：总分降序 → 完成时间升序
+  // 排序：总分降序 → 用时秒数升序（无用时数据的排后面）→ 提交时间升序（兜底）
   const sorted = [...best.values()].sort((a, b) => {
     if (b.total !== a.total) return b.total - a.total;
+    const da = Number(a.durationSeconds || 0);
+    const db = Number(b.durationSeconds || 0);
+    // 都有用时数据时，按用时升序（用时短排前）
+    if (da > 0 && db > 0) return da - db;
+    // 有数据的排前面，无数据的排后面
+    if (da > 0 && db === 0) return -1;
+    if (da === 0 && db > 0) return 1;
+    // 都没用时数据，按提交时间升序（先提交的排前）
     return Number(a.submitTimestamp || 0) - Number(b.submitTimestamp || 0);
   });
-  // 并列排名：同分同时间相同排名
+  // 并列排名：同分且用时相同排名
   return sorted.map((row, index) => {
     let rank = index + 1;
-    if (index > 0 && row.total === sorted[index - 1].total && row.submitTimestamp === sorted[index - 1].submitTimestamp) {
+    if (index > 0 && row.total === sorted[index - 1].total && row.durationSeconds === sorted[index - 1].durationSeconds) {
       rank = sorted[index - 1].rank;
     }
     return { ...row, rank };
@@ -260,6 +271,7 @@ async function submitScore(payload, userAgent) {
   const scores = payload.scores || {};
   const total = Number(scores.total || 0);
   const finishTime = payload.finishTime || "";
+  const durationSeconds = Number(payload.durationSeconds || 0);
   const submittedAt = new Date();
   const submitTimestamp = submittedAt.getTime();
   const rankSortValue = total * 10000000000000 - submitTimestamp;
@@ -281,6 +293,7 @@ async function submitScore(payload, userAgent) {
     [fieldNames.total]: total,
     [fieldNames.level]: getLevel(total),
     [fieldNames.finishTime]: finishTime ? toFeishuDate(finishTime) : submittedAt.getTime(),
+    [fieldNames.durationSeconds]: durationSeconds,
     [fieldNames.submitTimePrecise]: formatDateTimeMs(submittedAt),
     [fieldNames.submitTimestamp]: submitTimestamp,
     [fieldNames.rankSortValue]: rankSortValue,

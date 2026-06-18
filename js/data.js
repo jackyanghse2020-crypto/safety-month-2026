@@ -3,7 +3,8 @@ const APP_STORAGE_KEYS = {
   scores: "safetyMonth2026.scores",
   completedModules: "safetyMonth2026.completedModules",
   finishTime: "safetyMonth2026.finishTime",
-  answerLog: "safetyMonth2026.answerLog"
+  answerLog: "safetyMonth2026.answerLog",
+  startTimestamp: "safetyMonth2026.startTimestamp"
 };
 
 const defaultScores = {

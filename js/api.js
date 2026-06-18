@@ -6,6 +6,7 @@ async function submitScoreToServer() {
     scores: state.scores,
     completedModules: state.completedModules,
     finishTime: state.finishTime,
+    durationSeconds: state.startTimestamp ? Math.round((Date.now() - state.startTimestamp) / 1000) : 0,
     answerLog: JSON.parse(JSON.stringify(state.answerLog || {}))
   };
   const response = await fetch(`${API_BASE}/api/submit-score`, {
