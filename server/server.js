@@ -13,7 +13,7 @@ const env = loadEnv(join(__dirname, ".env"));
 // Render环境变量优先于.env文件
 Object.keys(process.env).forEach(k => { if (process.env[k] !== undefined) env[k] = process.env[k]; });
 const PORT = Number(process.env.PORT || env.PORT || 8788);
-const APP_VERSION = "v2026.06.11-render-tz";
+const APP_VERSION = "v2026.06.18-ranking-fix";
 const ACTIVITY_END_AT = env.ACTIVITY_END_AT || "";
 const FEISHU_BASE = "https://open.feishu.cn/open-apis";
 const FEISHU_APP_TOKEN = cleanToken(env.FEISHU_APP_TOKEN);
@@ -217,21 +217,35 @@ async function listAllRecords() {
   return rows;
 }
 
-/* ========== 排行榜：工号去重，取最高分，同分按最早提交 ========== */
+/* ========== 排行榜规则（2026-06-18更新）==========
+ * 1. 同一工号多次提交，只取第一次提交的成绩
+ * 2. 总分降序排列（分数最高排第一）
+ * 3. 相同分数，答题完成时间早的排前面
+ * 4. 相同分数且相同完成时间，并列排名
+ */
 function bestRows(records) {
   const best = new Map();
   for (const row of records) {
     const key = row.employeeId || `${row.name}-${row.department}`;
     const current = best.get(key);
-    const better = !current
-      || row.total > current.total
-      || (row.total === current.total && Number(row.submitTimestamp || 0) < Number(current.submitTimestamp || 0))
-      || (row.total === current.total && String(row.finishTime).localeCompare(String(current.finishTime)) < 0);
-    if (better) best.set(key, row);
+    // 只取第一次提交（submitTimestamp 最小的）
+    if (!current || Number(row.submitTimestamp || 0) < Number(current.submitTimestamp || 0)) {
+      best.set(key, row);
+    }
   }
-  return [...best.values()]
-    .sort((a, b) => b.total - a.total || Number(a.submitTimestamp || 0) - Number(b.submitTimestamp || 0) || String(a.finishTime).localeCompare(String(b.finishTime)))
-    .map((row, index) => ({ ...row, rank: index + 1 }));
+  // 排序：总分降序 → 完成时间升序
+  const sorted = [...best.values()].sort((a, b) => {
+    if (b.total !== a.total) return b.total - a.total;
+    return Number(a.submitTimestamp || 0) - Number(b.submitTimestamp || 0);
+  });
+  // 并列排名：同分同时间相同排名
+  return sorted.map((row, index) => {
+    let rank = index + 1;
+    if (index > 0 && row.total === sorted[index - 1].total && row.submitTimestamp === sorted[index - 1].submitTimestamp) {
+      rank = sorted[index - 1].rank;
+    }
+    return { ...row, rank };
+  });
 }
 
 function checkActivityEnd() {
