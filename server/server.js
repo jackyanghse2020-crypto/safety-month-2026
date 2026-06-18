@@ -250,11 +250,13 @@ function bestRows(records) {
     return Number(a.submitTimestamp || 0) - Number(b.submitTimestamp || 0);
   });
   // 并列排名：同分且用时相同排名
+  let prevRank = 0;
   return sorted.map((row, index) => {
     let rank = index + 1;
     if (index > 0 && row.total === sorted[index - 1].total && row.durationSeconds === sorted[index - 1].durationSeconds) {
-      rank = sorted[index - 1].rank;
+      rank = prevRank;
     }
+    prevRank = rank;
     return { ...row, rank };
   });
 }
